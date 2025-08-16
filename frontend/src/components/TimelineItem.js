@@ -1,14 +1,20 @@
+// TimelineItem.js
 import React from 'react';
-import './Timeline.css';
 
 const TimelineItem = ({ timestamp, description, onEdit, onDelete }) => {
   return (
     <tr>
-      <td><strong>{timestamp}</strong></td>
+      <td>{timestamp}</td>
       <td>{description}</td>
-      <td className="timeline-actions">
-        <button type="button" onClick={onEdit} className="edit-button">Edit</button>
-        <button type="button" onClick={onDelete} className="delete-button">Hapus</button>
+      <td>
+        <div className="actions">
+          <button type="button" className="edit-button" onClick={onEdit}>
+            <i className="bi bi-pencil-square"></i>
+          </button>
+          <button type="button" className="delete-button" onClick={onDelete}>
+            <i className="bi bi-trash"></i>
+          </button>
+        </div>
       </td>
     </tr>
   );

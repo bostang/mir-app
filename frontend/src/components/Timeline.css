@@ -1,39 +1,77 @@
-.timeline-container {
-  margin-top: 30px;
-  border-top: 2px solid #eee;
-  padding-top: 20px;
-}
+/* Timeline.css */
 
-.timeline-container h2 {
+/* Pusatkan teks pada header tabel */
+.timeline-container th {
   text-align: center;
-  margin-bottom: 20px;
-  color: #333;
 }
 
-table {
+/* Styling untuk tombol Edit dan Hapus */
+.edit-button,
+.delete-button {
+  border: none;
+  border-radius: 4px; /* Membuat sudut tumpul */
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: 0 1px;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button {
+  background-color: #ffc107; /* Warna kuning */
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+.delete-button {
+  background-color: #dc3545; /* Warna merah */
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+/* Styling untuk ikon di dalam tombol */
+.edit-button i,
+.delete-button i {
+  font-size: 16px;
+}
+
+/* Timeline.css */
+
+/* Mengoptimalkan lebar kolom */
+.timeline-container table {
+  table-layout: fixed;
   width: 100%;
-  border-collapse: collapse;
 }
 
-table th,
-table td {
+.timeline-container th:nth-child(1) {
+  width: 8%; /* Kurangi lebar untuk 'Waktu' */
+}
+
+.timeline-container th:nth-child(2) {
+  width: 79%; /* Tingkatkan lebar untuk 'Kegiatan / Temuan' */
+}
+
+.timeline-container th:nth-child(3) {
+  width: 11%; /* Lebar untuk 'Aksi' */
+}
+
+/* Mengatur tinggi baris dan perataan vertikal */
+.timeline-container td,
+.timeline-container th {
   padding: 12px;
   border: 1px solid #ddd;
-  text-align: left;
-  vertical-align: top;
+  vertical-align: top; /* Pastikan konten sel rata atas */
+  word-wrap: break-word; /* Mencegah teks meluber */
 }
 
-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-  color: #444;
-}
-
-table td:first-child {
-  width: 120px;
-  font-weight: bold;
-}
-
-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+/* Mengatur posisi tombol di dalam sel 'Aksi' */
+.actions {
+  display: flex; /* Menggunakan flexbox untuk perataan tombol */
+  justify-content: center; /* Rata tengah horizontal */
+  align-items: flex-start; /* Rata atas secara vertikal */
+  gap: 5px; /* Jarak antar tombol */
 }

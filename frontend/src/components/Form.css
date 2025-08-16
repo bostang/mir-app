@@ -16,37 +16,64 @@ h1, h2 {
   color: #333;
 }
 
-/* Tambahkan styling baru untuk tombol muat laporan */
+/* Styling baru untuk kedua tombol agar teratur */
 .floating-load-button {
-    position: fixed; /* Membuat elemen mengambang relatif terhadap viewport */
-    top: 100px; /* Jarak dari atas */
-    right: 20px; /* Jarak dari kanan */
-    z-index: 1000; /* Memastikan tombol berada di atas elemen lain */
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Jarak antara tombol upload dan reset */
 }
 
-.floating-load-button label {
+/* Styling untuk tombol upload (sebelumnya .floating-load-button label) */
+.floating-load-button .upload-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px; /* Lebar dan tinggi yang sama untuk membuat lingkaran */
+    width: 50px;
     height: 50px;
     background-color: #007bff;
     color: white;
-    border-radius: 50%; /* Membuat bentuk lingkaran */
+    border-radius: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.floating-load-button label i {
-    font-size: 24px; /* Ukuran ikon */
+.floating-load-button .upload-button i {
+    font-size: 24px;
 }
 
-.floating-load-button label:hover {
+.floating-load-button .upload-button:hover {
     background-color: #0056b3;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
+/* Styling untuk tombol reset (baru) */
+.floating-load-button .reset-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #dc3545; /* Warna merah */
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-load-button .reset-button i {
+    font-size: 24px;
+}
+
+.floating-load-button .reset-button:hover {
+    background-color: #c82333;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
 #json-file {
   display: none; /* Sembunyikan input file bawaan */
 }
@@ -322,4 +349,27 @@ table tr:nth-child(even) {
 .action-button.clipboard:hover {
     background-color: #007bff;
     color: white;
+}
+
+/* Styling baru untuk tombol 'Tambah' */
+.timeline-input-group .add-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Membuat bentuk lingkaran */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Ukuran ikon */
+  color: white;
+  background-color: #28a745; /* Warna hijau */
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 30px;
+}
+
+.timeline-input-group .add-button:hover {
+  background-color: #218838; /* Warna hijau yang lebih gelap saat di-hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }

@@ -1,23 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Timeline from './Timeline';
 import './Form.css';
-import 'bootstrap-icons/font/bootstrap-icons.css'; // boostrap icon
-import 'bootstrap/dist/css/bootstrap.min.css'; // untuk boostrap navbar
-import bniLogo from '../assets/bni-logo-white.png'; // logo BNI
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import bniLogo from '../assets/bni-logo-white.png';
 
 const IncidentForm = () => {
+  // Fungsi helper untuk mendapatkan nilai dari localStorage
+  const getSavedValue = (key, initialValue) => {
+    try {
+      const savedValue = localStorage.getItem(key);
+      if (savedValue) {
+        return JSON.parse(savedValue);
+      }
+    } catch (error) {
+      console.error("Error parsing saved data from localStorage", error);
+    }
+    return initialValue;
+  };
+
   // State untuk data form dan error
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => getSavedValue('formData', {
     event: '',
     impact: '',
     suspect: '',
     action: '',
     pic: '',
-  });
+  }));
   const [formErrors, setFormErrors] = useState({});
 
   // State untuk data timeline, item yang diedit, dan error
-  const [timelineData, setTimelineData] = useState([]);
+  const [timelineData, setTimelineData] = useState(() => getSavedValue('timelineData', []));
   const [newTimelineItem, setNewTimelineItem] = useState({
     jam: '',
     menit: '',
@@ -25,6 +38,16 @@ const IncidentForm = () => {
   });
   const [timelineErrors, setTimelineErrors] = useState({});
   const [editingIndex, setEditingIndex] = useState(null);
+
+  // Efek untuk menyimpan formData ke localStorage
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Efek untuk menyimpan timelineData ke localStorage
+  useEffect(() => {
+    localStorage.setItem('timelineData', JSON.stringify(timelineData));
+  }, [timelineData]);
 
   // Handler untuk input form utama
   const handleInputChange = (e) => {
@@ -208,7 +231,6 @@ const IncidentForm = () => {
           const filename = `${formData.event.trim() || 'Laporan MIR'}.pptx`.replace(/[^\w\s.]/gi, '_');
           a.download = filename;
           document.body.appendChild(a);
-          a.click();
           a.remove();
           window.URL.revokeObjectURL(url);
           alert('Laporan berhasil dibuat dan diunduh sebagai PPT!');
@@ -257,6 +279,33 @@ _Laporan ini dibuat secara otomatis._
     }
   };
 
+  // Handler untuk hapus semua field saat ini
+  const handleResetAll = () => {
+        // Reset state utama ke nilai default
+        setFormData({
+            event: '',
+            impact: '',
+            suspect: '',
+            action: '',
+            pic: '',
+        });
+        setTimelineData([]);
+        setNewTimelineItem({
+            jam: '',
+            menit: '',
+            description: '',
+        });
+        setFormErrors({});
+        setTimelineErrors({});
+        setEditingIndex(null);
+
+        // Hapus data dari localStorage
+        localStorage.removeItem('formData');
+        localStorage.removeItem('timelineData');
+        
+        alert('Semua field telah direset!');
+    };
+
 
   return (
     <div>
@@ -271,7 +320,8 @@ _Laporan ini dibuat secara otomatis._
       <div className="form-container">
         {/* Container untuk Judul dan tombol Muat Laporan */}
         <div className="floating-load-button">
-            <label htmlFor="json-file">
+            {/* Tombol Muat Laporan */}
+            <label htmlFor="json-file" className="upload-button">
                 <i className="bi bi-upload"></i>
             </label>
             <input
@@ -279,8 +329,13 @@ _Laporan ini dibuat secara otomatis._
                 id="json-file"
                 accept=".json"
                 onChange={handleFileLoad}
-                style={{ display: 'none' }} // Sembunyikan input file
+                style={{ display: 'none' }}
             />
+
+            {/* Tombol Reset */}
+            <label onClick={handleResetAll} className="reset-button">
+                <i className="bi bi-trash"></i>
+            </label>
         </div>
 
         <form>
@@ -381,9 +436,9 @@ _Laporan ini dibuat secara otomatis._
                 ></textarea>
                 {timelineErrors.description && <p className="error-message">✍️ {timelineErrors.description}</p>}
               </div>
-              <button type="button" className="add-button" onClick={handleAddOrUpdateTimeline}>
-                {editingIndex !== null ? 'Simpan Perubahan' : 'Tambah'}
-              </button>
+            <button type="button" className="add-button" onClick={handleAddOrUpdateTimeline}>
+                {editingIndex !== null ? 'Simpan Perubahan' : <i className="bi bi-plus"></i>}
+            </button>
             </div>
           </div>
 
