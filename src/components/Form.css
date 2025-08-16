@@ -1,3 +1,4 @@
+/* Container utama yang membungkus seluruh form */
 .form-container {
   max-width: 900px;
   margin: 40px auto;
@@ -5,13 +6,52 @@
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
-h1 {
+/* Judul dan sub-judul */
+h1, h2 {
   text-align: center;
   color: #333;
 }
 
+/* Bagian untuk Muat Laporan */
+.file-load-section {
+  text-align: right; /* Rata kanan */
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Rata kanan */
+}
+
+.file-load-section h2 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 8px 15px; /* Dikecilkan */
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.9em; /* Dikecilkan */
+}
+
+.file-label:hover {
+  background-color: #0056b3;
+}
+
+#json-file {
+  display: none; /* Sembunyikan input file bawaan */
+}
+
+/* Styling untuk setiap grup input (label + input) */
 .form-group {
   margin-bottom: 20px;
 }
@@ -38,6 +78,7 @@ textarea {
   min-height: 100px;
 }
 
+/* Tombol */
 button {
   padding: 12px 24px;
   background-color: #007bff;
@@ -58,35 +99,67 @@ button:hover {
   margin-top: 20px;
 }
 
+/* Styling untuk bagian Tambah Kronologis */
 .timeline-input-section {
   border-top: 2px solid #eee;
   padding-top: 20px;
   margin-top: 30px;
 }
 
+/* Mengatur tata letak elemen di dalam grup input timeline */
 .timeline-input-group {
   display: flex;
   gap: 15px;
-  align-items: flex-end;
+  align-items: flex-end; /* Memastikan semua elemen sejajar di bagian bawah */
+  flex-wrap: wrap;
 }
 
-.timeline-input-group .form-group {
-  flex: 1;
+/* Menyesuaikan input waktu */
+.timeline-input-group .time-input {
+  /* Hapus atau ubah flex menjadi 0 0 100px jika Anda ingin lebar yang tetap */
+  flex: 0 0 100px;
   margin-bottom: 0;
 }
 
-.timeline-input-group .time-input {
-  flex: 0 0 100px;
+/* Mengatur input deskripsi */
+.timeline-input-group .description-input {
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 0;
+}
+
+/* Mengatur tampilan tombol di dalam grup timeline */
+.timeline-input-group button {
+  flex-shrink: 0;
+  height: 48px; /* Tentukan tinggi yang sama dengan input di sebelahnya */
+  white-space: nowrap;
 }
 
 .timeline-input-group .description-input {
-  flex: 3;
+  flex: 1; /* Mengisi sisa ruang yang tersedia */
+  min-width: 250px;
+}
+
+/* Styling untuk input waktu yang dipecah */
+.timeline-input-group .time-fields {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timeline-input-group .time-fields input[type="number"] {
+  width: 40px; /* Lebar field jam/menit */
+  text-align: center;
+}
+
+.timeline-input-group .time-separator {
+  font-weight: bold;
 }
 
 /* Styling untuk pesan error */
 .error-message {
-  color: #d9534f; /* Warna merah yang lebih tua */
-  font-size: 13px; /* Ukuran font lebih kecil */
+  color: #d9534f;
+  font-size: 13px;
   margin-top: 5px;
 }
 
@@ -95,30 +168,16 @@ button:hover {
   font-size: 12px;
   color: #666;
   text-align: center;
-  margin-top: 10px; /* Sesuaikan margin untuk posisi yang pas */
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
-
-.report-title {
-  font-weight: bold;
+/* Styling untuk tabel timeline */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
-
-.report-date {
-  font-size: 0.8em;
-  color: #888;
-  margin-left: 10px;
-}
-
-.load-button {
-  padding: 5px 10px;
-  background-color: #28a745;
-}
-
-.load-button:hover {
-  background-color: #218838;
-}
-
 
 table th,
 table td {
@@ -134,11 +193,6 @@ table th {
   color: #444;
 }
 
-table td:first-child {
-  width: 120px;
-  font-weight: bold;
-}
-
 table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
@@ -149,7 +203,7 @@ table tr:nth-child(even) {
   white-space: nowrap;
 }
 
-/* Styling untuk tombol edit */
+/* Styling untuk tombol edit & hapus di tabel */
 .edit-button {
   background-color: #ffc107;
   color: #333;
@@ -162,7 +216,6 @@ table tr:nth-child(even) {
   background-color: #e0a800;
 }
 
-/* Styling untuk tombol hapus */
 .delete-button {
   background-color: #dc3545;
   padding: 6px 12px;
@@ -171,91 +224,4 @@ table tr:nth-child(even) {
 
 .delete-button:hover {
   background-color: #c82333;
-}
-
-/* Styling untuk input file JSON */
-.file-load-section {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.file-label {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.file-label:hover {
-  background-color: #0056b3;
-}
-
-#json-file {
-  display: none; /* Sembunyikan input file bawaan */
-}
-
-/* --- */
-
-/* ... (kode di atas tidak berubah) ... */
-
-/* Styling untuk input waktu yang dipecah */
-.timeline-input-group .time-fields {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.timeline-input-group .time-fields input[type="number"] {
-  width: 60px; /* Lebar field jam/menit */
-  text-align: center;
-}
-
-.timeline-input-group .time-separator {
-  font-weight: bold;
-}
-
-/* Styling untuk input waktu yang dipecah */
-.timeline-input-group .time-fields {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.timeline-input-group .time-fields input[type="number"] {
-  width: 40px;
-  text-align: center;
-}
-
-.timeline-input-group .time-separator {
-  font-weight: bold;
-}
-
-/* --- PERUBAHAN DI SINI --- */
-
-.timeline-input-group {
-  display: flex;
-  gap: 15px;
-  align-items: center; /* Mengubah dari flex-start menjadi center */
-  flex-wrap: wrap;
-}
-
-.timeline-input-group .time-input {
-  /* Biarkan flexbox mengatur lebar, namun berikan ukuran minimal */
-  flex: 0 0 auto;
-  min-width: 130px;
-}
-
-.timeline-input-group .description-input {
-  flex: 1;
-  min-width: 250px;
-}
-
-.timeline-input-group button {
-  flex-shrink: 0;
-  white-space: nowrap;
-  /* Tambahan margin untuk sedikit ruang */
-  margin-top: 15px;
 }

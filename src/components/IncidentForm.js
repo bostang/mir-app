@@ -67,26 +67,42 @@ const IncidentForm = () => {
   };
 
   // Handler saat tombol 'Tambah/Simpan' timeline diklik
-  const handleAddOrUpdateTimeline = () => {
+    // Handler saat tombol 'Tambah/Simpan' timeline diklik
+    const handleAddOrUpdateTimeline = () => {
     const errors = validateTimelineItem();
     if (Object.keys(errors).length === 0) {
-      const timestamp = `${newTimelineItem.jam.padStart(2, '0')}:${newTimelineItem.menit.padStart(2, '0')}`;
-      const itemToSave = { timestamp, description: newTimelineItem.description };
+        const timestamp = `${newTimelineItem.jam.padStart(2, '0')}:${newTimelineItem.menit.padStart(2, '0')}`;
+        const itemToSave = { timestamp, description: newTimelineItem.description };
 
-      if (editingIndex !== null) {
-        const updatedTimeline = [...timelineData];
+        let updatedTimeline;
+        if (editingIndex !== null) {
+        updatedTimeline = [...timelineData];
         updatedTimeline[editingIndex] = itemToSave;
-        setTimelineData(updatedTimeline);
         setEditingIndex(null);
-      } else {
-        setTimelineData([...timelineData, itemToSave]);
-      }
-      setNewTimelineItem({ jam: '', menit: '', description: '' });
-      setTimelineErrors({});
+        } else {
+        updatedTimeline = [...timelineData, itemToSave];
+        }
+
+        // --- LOGIKA PENGURUTAN BARU ---
+        // Urutkan array berdasarkan timestamp (waktu)
+        updatedTimeline.sort((a, b) => {
+        const timeA = a.timestamp.split(':').map(Number);
+        const timeB = b.timestamp.split(':').map(Number);
+
+        if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
+        }
+        return timeA[1] - timeB[1];
+        });
+        // --- AKHIR LOGIKA PENGURUTAN ---
+
+        setTimelineData(updatedTimeline);
+        setNewTimelineItem({ jam: '', menit: '', description: '' });
+        setTimelineErrors({});
     } else {
-      setTimelineErrors(errors);
+        setTimelineErrors(errors);
     }
-  };
+    };
 
   // Handler untuk memulai mode edit
   const handleEditTimeline = (index) => {
@@ -140,7 +156,7 @@ const IncidentForm = () => {
       // 1. Siapkan data laporan
       const finalReport = {
         event: formData.event,
-        dampak: formData.impact,
+        impact: formData.impact,
         suspect: formData.suspect,
         action: formData.action,
         pic: formData.pic,
@@ -181,17 +197,18 @@ const IncidentForm = () => {
 
   return (
     <div className="form-container">
-      <h1>Major Incident Report (MIR) Generator 📝</h1>
-
-      <div className="file-load-section">
-        <h2>Muat Laporan</h2>
-        <label htmlFor="json-file" className="file-label">Pilih File JSON</label>
-        <input
-          type="file"
-          id="json-file"
-          accept=".json"
-          onChange={handleFileLoad}
-        />
+      {/* Container untuk Judul dan tombol Muat Laporan */}
+      <div className="header-and-load">
+        <h1>Major Incident Report (MIR) Generator 📝</h1>
+        <div className="file-load-section">
+          <label htmlFor="json-file" className="file-label">Muat Laporan</label>
+          <input
+            type="file"
+            id="json-file"
+            accept=".json"
+            onChange={handleFileLoad}
+          />
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -214,7 +231,7 @@ const IncidentForm = () => {
             name="impact"
             value={formData.impact}
             onChange={handleInputChange}
-            placeholder="Contoh:Pengguna tidak bisa login (terutama setelah jam 17:00); Peningkatan laporan kegagalan login di tim Customer Service"
+            placeholder="Contoh:\n- Pengguna tidak bisa login (terutama setelah jam 17:00)\n- Peningkatan laporan kegagalan login di tim Customer Service"
           ></textarea>
           {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
         </div>
@@ -236,9 +253,8 @@ const IncidentForm = () => {
             name="action"
             value={formData.action}
             onChange={handleInputChange}
-            placeholder="Contoh: Pengecekan status servis otentikasi di server; Restart layanan secara bertahap"
+            placeholder="Contoh:\n- Pengecekan status servis otentikasi di server\n- Restart layanan secara bertahap"
           ></textarea>
-          {formErrors.action && <p className="error-message">⚠️ {formErrors.action}</p>}
         </div>
         <div className="form-group">
           <label htmlFor="pic">PIC: *</label>
