@@ -16,35 +16,35 @@ h1, h2 {
   color: #333;
 }
 
-/* Bagian untuk Muat Laporan */
-.file-load-section {
-  text-align: right; /* Rata kanan */
-  margin-bottom: 25px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* Rata kanan */
+/* Tambahkan styling baru untuk tombol muat laporan */
+.floating-load-button {
+    position: fixed; /* Membuat elemen mengambang relatif terhadap viewport */
+    top: 100px; /* Jarak dari atas */
+    right: 20px; /* Jarak dari kanan */
+    z-index: 1000; /* Memastikan tombol berada di atas elemen lain */
 }
 
-.file-load-section h2 {
-  font-size: 1.1em;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #555;
+.floating-load-button label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Lebar dan tinggi yang sama untuk membuat lingkaran */
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%; /* Membuat bentuk lingkaran */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.file-label {
-  display: inline-block;
-  padding: 8px 15px; /* Dikecilkan */
-  background-color: #007bff;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 0.9em; /* Dikecilkan */
+.floating-load-button label i {
+    font-size: 24px; /* Ukuran ikon */
 }
 
-.file-label:hover {
-  background-color: #0056b3;
+.floating-load-button label:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 #json-file {

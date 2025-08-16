@@ -270,16 +270,17 @@ _Laporan ini dibuat secara otomatis._
       </nav>
       <div className="form-container">
         {/* Container untuk Judul dan tombol Muat Laporan */}
-        <div className="header-and-load">  
-          <div className="file-load-section">
-            <label htmlFor="json-file" className="file-label">Muat Laporan</label>
+        <div className="floating-load-button">
+            <label htmlFor="json-file">
+                <i className="bi bi-upload"></i>
+            </label>
             <input
-              type="file"
-              id="json-file"
-              accept=".json"
-              onChange={handleFileLoad}
+                type="file"
+                id="json-file"
+                accept=".json"
+                onChange={handleFileLoad}
+                style={{ display: 'none' }} // Sembunyikan input file
             />
-          </div>
         </div>
 
         <form>
@@ -340,7 +341,7 @@ _Laporan ini dibuat secara otomatis._
           </div>
 
           <div className="timeline-input-section">
-            <h2>Tambah Kronologis</h2>
+            <h3>Tambah Kronologis</h3>
             <div className="timeline-input-group">
               <div className="form-group time-input">
                 <label htmlFor="jam">Waktu*</label>
@@ -404,6 +405,9 @@ _Laporan ini dibuat secara otomatis._
           </div>
         </form>
       </div>
+      <footer className="bg-dark text-light text-center p-1">
+          <p>&copy; 2025 All Rights Reserved. Created by Bostang Palaguna</p>
+      </footer>
     </div>
   );
 };

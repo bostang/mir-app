@@ -5,7 +5,7 @@ import './Timeline.css';
 const Timeline = ({ timelineData, onEdit, onDelete }) => {
   return (
     <div className="timeline-container">
-      <h2>Timeline Kronologis</h2>
+      <h3>Timeline Kronologis<h3>
       <table>
         <thead>
           <tr>
