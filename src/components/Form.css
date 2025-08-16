@@ -82,3 +82,19 @@ button:hover {
 .timeline-input-group .description-input {
   flex: 3;
 }
+
+/* Styling untuk pesan error */
+.error-message {
+  color: #d9534f; /* Warna merah yang lebih tua */
+  font-size: 13px; /* Ukuran font lebih kecil */
+  margin-top: 5px;
+}
+
+/* Styling untuk keterangan field wajib diisi */
+.required-note {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  margin-top: 10px; /* Sesuaikan margin untuk posisi yang pas */
+  margin-bottom: 20px;
+}
