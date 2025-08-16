@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Timeline from './Timeline';
 import './Form.css';
+import 'bootstrap-icons/font/bootstrap-icons.css'; // boostrap icon
+import 'bootstrap/dist/css/bootstrap.min.css'; // untuk boostrap navbar
+import bniLogo from '../assets/bni-logo-white.png'; // logo BNI
 
 const IncidentForm = () => {
   // State untuk data form dan error
@@ -82,7 +85,6 @@ const IncidentForm = () => {
         updatedTimeline = [...timelineData, itemToSave];
       }
 
-      // --- LOGIKA PENGURUTAN BARU ---
       // Urutkan array berdasarkan timestamp (waktu)
       updatedTimeline.sort((a, b) => {
         const timeA = a.timestamp.split(':').map(Number);
@@ -93,7 +95,6 @@ const IncidentForm = () => {
         }
         return timeA[1] - timeB[1];
       });
-      // --- AKHIR LOGIKA PENGURUTAN ---
 
       setTimelineData(updatedTimeline);
       setNewTimelineItem({ jam: '', menit: '', description: '' });
@@ -147,7 +148,7 @@ const IncidentForm = () => {
     }
   };
 
-  // Handler untuk menyimpan sebagai JSON (logika lama)
+  // Handler untuk menyimpan sebagai JSON
   const handleSaveJson = () => {
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
@@ -164,7 +165,7 @@ const IncidentForm = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      const filename = `${formData.event.trim() || 'Laporan MIR'}.json`.replace(/[^\w\s\.]/gi, '_');
+      const filename = `${formData.event.trim() || 'Laporan MIR'}.json`.replace(/[^\w\s.]/gi, '_');
       a.download = filename;
       document.body.appendChild(a);
       a.click();
@@ -177,7 +178,7 @@ const IncidentForm = () => {
     }
   };
 
-  // Handler untuk menyimpan sebagai PPT (logika baru)
+  // Handler untuk menyimpan sebagai PPT
   const handleSavePpt = async () => {
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
@@ -204,7 +205,7 @@ const IncidentForm = () => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          const filename = `${formData.event.trim() || 'Laporan MIR'}.pptx`.replace(/[^\w\s\.]/gi, '_');
+          const filename = `${formData.event.trim() || 'Laporan MIR'}.pptx`.replace(/[^\w\s.]/gi, '_');
           a.download = filename;
           document.body.appendChild(a);
           a.click();
@@ -224,8 +225,8 @@ const IncidentForm = () => {
     }
   };
   
-  // Handler untuk mengirim ke WhatsApp (dengan opsi salin ke clipboard)
-  const handleSendWa = () => {
+  // Handler untuk menyalin ke clipboard
+  const handleCopyClipboard = () => {
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
       const formattedText = `
@@ -236,20 +237,20 @@ const IncidentForm = () => {
 • *Action:* ${formData.action}
 • *PIC:* ${formData.pic}
 
+*--- Kronologis Kejadian ---*
 ${timelineData.map(item => `- *${item.timestamp}*: ${item.description}`).join('\n')}
 
 _Laporan ini dibuat secara otomatis._
-      `.trim(); // Menghapus spasi ekstra di awal/akhir
+      `.trim();
 
       navigator.clipboard.writeText(formattedText)
         .then(() => {
-          alert('Laporan berhasil disalin ke clipboard! Silakan paste di WhatsApp.');
+          alert('Laporan berhasil disalin ke clipboard! Anda bisa langsung paste di aplikasi pesan seperti WhatsApp.');
         })
         .catch(err => {
           console.error('Gagal menyalin ke clipboard:', err);
           alert('Gagal menyalin laporan. Mohon coba salin manual.');
         });
-
     } else {
       setFormErrors(errors);
       alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
@@ -258,143 +259,151 @@ _Laporan ini dibuat secara otomatis._
 
 
   return (
-    <div className="form-container">
-      {/* Container untuk Judul dan tombol Muat Laporan */}
-      <div className="header-and-load">
-        <h1>Major Incident Report (MIR) Generator 📝</h1>
-        <div className="file-load-section">
-          <label htmlFor="json-file" className="file-label">Muat Laporan</label>
-          <input
-            type="file"
-            id="json-file"
-            accept=".json"
-            onChange={handleFileLoad}
-          />
-        </div>
-      </div>
-
-      <form> {/* Hapus `onSubmit={handleSubmit}` */}
-        <div className="form-group">
-          <label htmlFor="event">Event: *</label>
-          <input
-            type="text"
-            id="event"
-            name="event"
-            value={formData.event}
-            onChange={handleInputChange}
-            placeholder="Contoh: Kendala otentikasi pengguna pada layanan Mobile App"
-          />
-          {formErrors.event && <p className="error-message">⚠️ {formErrors.event}</p>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="impact">Dampak: *</label>
-          <textarea
-            id="impact"
-            name="impact"
-            value={formData.impact}
-            onChange={handleInputChange}
-            placeholder="Contoh: Pengguna tidak bisa login (terutama setelah jam 17:00)"
-          ></textarea>
-          {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="suspect">Suspect:</label>
-          <input
-            type="text"
-            id="suspect"
-            name="suspect"
-            value={formData.suspect}
-            onChange={handleInputChange}
-            placeholder="Contoh: Diduga ada masalah pada servis otentikasi"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="action">Action:</label>
-          <textarea
-            id="action"
-            name="action"
-            value={formData.action}
-            onChange={handleInputChange}
-            placeholder="Contoh: Pengecekan status servis otentikasi di server Restart layanan secara bertahap"
-          ></textarea>
-        </div>
-        <div className="form-group">
-          <label htmlFor="pic">PIC: *</label>
-          <input
-            type="text"
-            id="pic"
-            name="pic"
-            value={formData.pic}
-            onChange={handleInputChange}
-            placeholder="Contoh: Tim Backend, Tim SRE, Tim Keamanan"
-          />
-          {formErrors.pic && <p className="error-message">⚠️ {formErrors.pic}</p>}
-        </div>
-
-        <div className="timeline-input-section">
-          <h2>Tambah Kronologis</h2>
-          <div className="timeline-input-group">
-            <div className="form-group time-input">
-              <label htmlFor="jam">Waktu: *</label>
-              <div className="time-fields">
-                <input
-                  type="number"
-                  id="jam"
-                  name="jam"
-                  placeholder="HH"
-                  value={newTimelineItem.jam}
-                  onChange={handleTimelineChange}
-                  min="0"
-                  max="23"
-                />
-                <span className="time-separator">:</span>
-                <input
-                  type="number"
-                  id="menit"
-                  name="menit"
-                  placeholder="MM"
-                  value={newTimelineItem.menit}
-                  onChange={handleTimelineChange}
-                  min="0"
-                  max="59"
-                />
-              </div>
-              {timelineErrors.timestamp && <p className="error-message">⏰ {timelineErrors.timestamp}</p>}
-            </div>
-            <div className="form-group description-input">
-              <label htmlFor="description">Deskripsi: *</label>
-              <textarea
-                id="description"
-                name="description"
-                placeholder="Contoh: Terdapat lonjakan error HTTP 500 pada API /auth/login"
-                value={newTimelineItem.description}
-                onChange={handleTimelineChange}
-              ></textarea>
-              {timelineErrors.description && <p className="error-message">✍️ {timelineErrors.description}</p>}
-            </div>
-            <button type="button" onClick={handleAddOrUpdateTimeline}>
-              {editingIndex !== null ? 'Simpan Perubahan' : 'Tambah'}
-            </button>
+    <div>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+          <div className="container d-flex justify-content-center">
+              <a className="navbar-brand" href="/">
+                <img src={bniLogo} alt="Logo"  height="20" className="d-inline-block align-text-top me-2" />
+                Major Incident Report (MIR) Generator 📝
+              </a>
+          </div>
+      </nav>
+      <div className="form-container">
+        {/* Container untuk Judul dan tombol Muat Laporan */}
+        <div className="header-and-load">  
+          <div className="file-load-section">
+            <label htmlFor="json-file" className="file-label">Muat Laporan</label>
+            <input
+              type="file"
+              id="json-file"
+              accept=".json"
+              onChange={handleFileLoad}
+            />
           </div>
         </div>
 
-        {timelineData.length > 0 && <Timeline timelineData={timelineData} onEdit={handleEditTimeline} onDelete={handleDeleteTimeline} />}
+        <form>
+          <div className="form-group">
+            <label htmlFor="event">Event*</label>
+            <input
+              type="text"
+              id="event"
+              name="event"
+              value={formData.event}
+              onChange={handleInputChange}
+              placeholder="Contoh: Kendala otentikasi pengguna pada layanan Mobile App"
+            />
+            {formErrors.event && <p className="error-message">⚠️ {formErrors.event}</p>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="impact">Dampak*</label>
+            <textarea
+              id="impact"
+              name="impact"
+              value={formData.impact}
+              onChange={handleInputChange}
+              placeholder="Contoh: Pengguna tidak bisa login (terutama setelah jam 17:00)"
+            ></textarea>
+            {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="suspect">Suspect</label>
+            <textarea
+              id="suspect"
+              name="suspect"
+              value={formData.suspect}
+              onChange={handleInputChange}
+              placeholder="Contoh: Diduga ada masalah pada servis otentikasi"
+            ></textarea>
+          </div>
+          <div className="form-group">
+            <label htmlFor="action">Action</label>
+            <textarea
+              id="action"
+              name="action"
+              value={formData.action}
+              onChange={handleInputChange}
+              placeholder="Contoh: Pengecekan status servis otentikasi di server Restart layanan secara bertahap"
+            ></textarea>
+          </div>
+          <div className="form-group">
+            <label htmlFor="pic">PIC*</label>
+            <input
+              type="text"
+              id="pic"
+              name="pic"
+              value={formData.pic}
+              onChange={handleInputChange}
+              placeholder="Contoh: Tim Backend, Tim SRE, Tim Keamanan"
+            />
+            {formErrors.pic && <p className="error-message">⚠️ {formErrors.pic}</p>}
+          </div>
 
-        <p className="required-note">* Bidang dengan tanda bintang wajib diisi</p>
-        
-        {/* Tambahkan div baru untuk tombol-tombol aksi */}
-        <div className="action-buttons">
-            <button type="button" className="submit-button" onClick={handleSaveJson}>
-                Simpan Laporan (.json)
-            </button>
-            <button type="button" className="submit-button" onClick={handleSavePpt}>
-                Simpan Laporan (.pptx)
-            </button>
-            <button type="button" className="submit-button" onClick={handleSendWa}>
-                Kirim ke WhatsApp
-            </button>
-        </div>
-      </form>
+          <div className="timeline-input-section">
+            <h2>Tambah Kronologis</h2>
+            <div className="timeline-input-group">
+              <div className="form-group time-input">
+                <label htmlFor="jam">Waktu*</label>
+                <div className="time-fields">
+                  <input
+                    type="number"
+                    id="jam"
+                    name="jam"
+                    placeholder="HH"
+                    value={newTimelineItem.jam}
+                    onChange={handleTimelineChange}
+                    min="0"
+                    max="23"
+                  />
+                  <span className="time-separator">:</span>
+                  <input
+                    type="number"
+                    id="menit"
+                    name="menit"
+                    placeholder="MM"
+                    value={newTimelineItem.menit}
+                    onChange={handleTimelineChange}
+                    min="0"
+                    max="59"
+                  />
+                </div>
+                {timelineErrors.timestamp && <p className="error-message">⏰ {timelineErrors.timestamp}</p>}
+              </div>
+              <div className="form-group description-input">
+                <label htmlFor="description">Deskripsi*</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Contoh: Terdapat lonjakan error HTTP 500 pada API /auth/login"
+                  value={newTimelineItem.description}
+                  onChange={handleTimelineChange}
+                ></textarea>
+                {timelineErrors.description && <p className="error-message">✍️ {timelineErrors.description}</p>}
+              </div>
+              <button type="button" className="add-button" onClick={handleAddOrUpdateTimeline}>
+                {editingIndex !== null ? 'Simpan Perubahan' : 'Tambah'}
+              </button>
+            </div>
+          </div>
+
+          {timelineData.length > 0 && <Timeline timelineData={timelineData} onEdit={handleEditTimeline} onDelete={handleDeleteTimeline} />}
+
+          <p className="required-note">* <i>Field</i> dengan tanda bintang wajib diisi</p>
+          
+          {/* Kontainer baru untuk tombol-tombol aksi */}
+          <div className="action-buttons">
+              <button type="button" className="action-button json" onClick={handleSaveJson}>
+                  <i className="bi bi-download"></i> Simpan Laporan (.json)
+              </button>
+              <button type="button" className="action-button pptx" onClick={handleSavePpt}>
+                  <i className="bi bi-download"></i> Simpan Laporan (.pptx)
+              </button>
+              <button type="button" className="action-button clipboard" onClick={handleCopyClipboard}>
+                  <i className="bi bi-clipboard"></i> Salin ke Clipboard
+              </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

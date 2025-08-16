@@ -1,6 +1,6 @@
 /* Container utama yang membungkus seluruh form */
 .form-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 20px 40px;
   background-color: #ffffff;
@@ -94,6 +94,22 @@ button:hover {
   background-color: #0056b3;
 }
 
+/* Tambahkan styling ini di file Form.css Anda */
+.add-button {
+    padding: 12px 24px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px; /* Tambahkan properti ini */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+    background-color: #0056b3;
+}
+
 .submit-button {
   width: 100%;
   margin-top: 20px;
@@ -148,7 +164,7 @@ button:hover {
 }
 
 .timeline-input-group .time-fields input[type="number"] {
-  width: 40px; /* Lebar field jam/menit */
+  width: 50px; /* Lebar field jam/menit */
   text-align: center;
 }
 
@@ -224,4 +240,86 @@ table tr:nth-child(even) {
 
 .delete-button:hover {
   background-color: #c82333;
+}
+/* Tambahkan bagian ini di akhir file Form.css Anda jika belum ada */
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-button {
+    flex: 1; /* Memberikan lebar yang sama untuk setiap tombol */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Jarak antara ikon dan teks */
+    font-size: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+}
+
+/* Styling umum untuk semua tombol aksi */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.action-button {
+    flex: 1; /* Memberikan lebar yang sama untuk setiap tombol */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Jarak antara ikon dan teks */
+    font-size: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Styling spesifik untuk masing-masing tombol */
+/* JSON Button: Default biru, hover putih */
+.action-button.json {
+    color: #007bff;
+    background-color: transparent;
+    border: 1px solid #007bff;
+}
+
+.action-button.json:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* PPTX Button: Default merah, hover putih */
+.action-button.pptx {
+    color: #007bff;
+    background-color: transparent;
+    border: 1px solid #007bff;
+}
+
+.action-button.pptx:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Clipboard Button: Default hijau, hover putih */
+.action-button.clipboard {
+    color: #007bff;
+    background-color: transparent;
+    border: 1px solid #007bff;
+}
+
+.action-button.clipboard:hover {
+    background-color: #007bff;
+    color: white;
 }
