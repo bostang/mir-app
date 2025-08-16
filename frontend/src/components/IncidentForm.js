@@ -67,42 +67,41 @@ const IncidentForm = () => {
   };
 
   // Handler saat tombol 'Tambah/Simpan' timeline diklik
-    // Handler saat tombol 'Tambah/Simpan' timeline diklik
-    const handleAddOrUpdateTimeline = () => {
+  const handleAddOrUpdateTimeline = () => {
     const errors = validateTimelineItem();
     if (Object.keys(errors).length === 0) {
-        const timestamp = `${newTimelineItem.jam.padStart(2, '0')}:${newTimelineItem.menit.padStart(2, '0')}`;
-        const itemToSave = { timestamp, description: newTimelineItem.description };
+      const timestamp = `${newTimelineItem.jam.padStart(2, '0')}:${newTimelineItem.menit.padStart(2, '0')}`;
+      const itemToSave = { timestamp, description: newTimelineItem.description };
 
-        let updatedTimeline;
-        if (editingIndex !== null) {
+      let updatedTimeline;
+      if (editingIndex !== null) {
         updatedTimeline = [...timelineData];
         updatedTimeline[editingIndex] = itemToSave;
         setEditingIndex(null);
-        } else {
+      } else {
         updatedTimeline = [...timelineData, itemToSave];
-        }
+      }
 
-        // --- LOGIKA PENGURUTAN BARU ---
-        // Urutkan array berdasarkan timestamp (waktu)
-        updatedTimeline.sort((a, b) => {
+      // --- LOGIKA PENGURUTAN BARU ---
+      // Urutkan array berdasarkan timestamp (waktu)
+      updatedTimeline.sort((a, b) => {
         const timeA = a.timestamp.split(':').map(Number);
         const timeB = b.timestamp.split(':').map(Number);
 
         if (timeA[0] !== timeB[0]) {
-            return timeA[0] - timeB[0];
+          return timeA[0] - timeB[0];
         }
         return timeA[1] - timeB[1];
-        });
-        // --- AKHIR LOGIKA PENGURUTAN ---
+      });
+      // --- AKHIR LOGIKA PENGURUTAN ---
 
-        setTimelineData(updatedTimeline);
-        setNewTimelineItem({ jam: '', menit: '', description: '' });
-        setTimelineErrors({});
+      setTimelineData(updatedTimeline);
+      setNewTimelineItem({ jam: '', menit: '', description: '' });
+      setTimelineErrors({});
     } else {
-        setTimelineErrors(errors);
+      setTimelineErrors(errors);
     }
-    };
+  };
 
   // Handler untuk memulai mode edit
   const handleEditTimeline = (index) => {
@@ -148,12 +147,40 @@ const IncidentForm = () => {
     }
   };
 
-  // Handler saat form disubmit (sekarang untuk menyimpan/mengunduh file)
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Handler untuk menyimpan sebagai JSON (logika lama)
+  const handleSaveJson = () => {
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
-      // 1. Siapkan data laporan
+      const finalReport = {
+        event: formData.event,
+        impact: formData.impact,
+        suspect: formData.suspect,
+        action: formData.action,
+        pic: formData.pic,
+        timeline: timelineData,
+      };
+      const jsonString = JSON.stringify(finalReport, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const filename = `${formData.event.trim() || 'Laporan MIR'}.json`.replace(/[^\w\s\.]/gi, '_');
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert('Laporan berhasil disimpan dan diunduh sebagai JSON!');
+    } else {
+      setFormErrors(errors);
+      alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
+    }
+  };
+
+  // Handler untuk menyimpan sebagai PPT (logika baru)
+  const handleSavePpt = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length === 0) {
       const finalReport = {
         event: formData.event,
         impact: formData.impact,
@@ -163,37 +190,72 @@ const IncidentForm = () => {
         timeline: timelineData,
       };
 
-      // 2. Ubah objek laporan menjadi string JSON yang rapi
-      const jsonString = JSON.stringify(finalReport, null, 2);
+      try {
+        const response = await fetch('http://localhost:3001/api/generate-ppt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(finalReport),
+        });
 
-      // 3. Buat objek Blob dari string JSON
-      const blob = new Blob([jsonString], { type: 'application/json' });
-
-      // 4. Buat URL untuk objek Blob
-      const url = URL.createObjectURL(blob);
-
-      // 5. Buat elemen <a> sementara untuk memicu unduhan
-      const a = document.createElement('a');
-      a.href = url;
-      
-      // 6. Tentukan nama file. Gunakan nama event untuk penamaan yang lebih dinamis.
-      const filename = `${formData.event.trim() || 'Laporan MIR'}.json`.replace(/[^\w\s\.]/gi, '_');
-      a.download = filename;
-
-      // 7. Tambahkan elemen <a> ke body, klik, lalu hapus
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      // 8. Hapus URL objek untuk membersihkan memori
-      URL.revokeObjectURL(url);
-      
-      alert('Laporan berhasil disimpan dan diunduh!');
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const filename = `${formData.event.trim() || 'Laporan MIR'}.pptx`.replace(/[^\w\s\.]/gi, '_');
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+          alert('Laporan berhasil dibuat dan diunduh sebagai PPT!');
+        } else {
+          alert('Gagal membuat laporan PPT. Mohon coba lagi.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menghubungkan ke server.');
+      }
     } else {
       setFormErrors(errors);
       alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
     }
   };
+  
+  // Handler untuk mengirim ke WhatsApp (dengan opsi salin ke clipboard)
+  const handleSendWa = () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length === 0) {
+      const formattedText = `
+*--- Major Incident Report ---*
+• *Event:* ${formData.event}
+• *Dampak:* ${formData.impact}
+• *Suspect:* ${formData.suspect}
+• *Action:* ${formData.action}
+• *PIC:* ${formData.pic}
+
+${timelineData.map(item => `- *${item.timestamp}*: ${item.description}`).join('\n')}
+
+_Laporan ini dibuat secara otomatis._
+      `.trim(); // Menghapus spasi ekstra di awal/akhir
+
+      navigator.clipboard.writeText(formattedText)
+        .then(() => {
+          alert('Laporan berhasil disalin ke clipboard! Silakan paste di WhatsApp.');
+        })
+        .catch(err => {
+          console.error('Gagal menyalin ke clipboard:', err);
+          alert('Gagal menyalin laporan. Mohon coba salin manual.');
+        });
+
+    } else {
+      setFormErrors(errors);
+      alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
+    }
+  };
+
 
   return (
     <div className="form-container">
@@ -211,7 +273,7 @@ const IncidentForm = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form> {/* Hapus `onSubmit={handleSubmit}` */}
         <div className="form-group">
           <label htmlFor="event">Event: *</label>
           <input
@@ -320,9 +382,18 @@ const IncidentForm = () => {
 
         <p className="required-note">* Bidang dengan tanda bintang wajib diisi</p>
         
-        <button type="submit" className="submit-button">
-          Simpan Laporan
-        </button>
+        {/* Tambahkan div baru untuk tombol-tombol aksi */}
+        <div className="action-buttons">
+            <button type="button" className="submit-button" onClick={handleSaveJson}>
+                Simpan Laporan (.json)
+            </button>
+            <button type="button" className="submit-button" onClick={handleSavePpt}>
+                Simpan Laporan (.pptx)
+            </button>
+            <button type="button" className="submit-button" onClick={handleSendWa}>
+                Kirim ke WhatsApp
+            </button>
+        </div>
       </form>
     </div>
   );
