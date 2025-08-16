@@ -1,0 +1,29 @@
+{
+  "event": "Kendala transaksi GoPay pada Mbank dan Wondr (intermittent)",
+  "impact": "Peningkatan kegagalan transaksi GoPay pada Mbank dan Wondr (intermittent)\nPeningkatan response time API gateway internal",
+  "suspect": "Dalam investigasi tim",
+  "action": "Layanan binding GoPay di Wondr sementara ditutup\nKoordinasi melalui War Room",
+  "pic": "IFM, APS, Tim GoPay",
+  "timeline": [
+    {
+      "timestamp": "16:41",
+      "description": "Mulai terjadi intermittent error pada transaksi top up GoPay."
+    },
+    {
+      "timestamp": "17:48",
+      "description": "Dilakukan pengecekan konektivitas ke `https://snap.gopayapi.com`.\n- Ping dari intranet resolve ke IP publik **149.129.193.126**.\n- Ping dari router internet ke IP tersebut berjalan normal."
+    },
+    {
+      "timestamp": "18:12",
+      "description": "Layanan top up GoPay ditutup sementara. Banyak laporan dari nasabah ke CXC bahwa top up GoPay gagal, namun saldo rekening tetap terdebet."
+    },
+    {
+      "timestamp": "18:17",
+      "description": "Dari 10 percobaan `HTTP POST` ke `gopay-topup/out/money/topup`, respon yang diterima **500 Internal Server Error** pada server `BNI_PROD_03` dan `BNI_PROD_01`."
+    },
+    {
+      "timestamp": "18:33",
+      "description": "Tim bisnis GoPay berhasil dihubungi. Saat ini sedang mencoba menghubungi tim teknis GoPay untuk segera bergabung di War Room."
+    }
+  ]
+}

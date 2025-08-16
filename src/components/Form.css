@@ -98,3 +98,119 @@ button:hover {
   margin-top: 10px; /* Sesuaikan margin untuk posisi yang pas */
   margin-bottom: 20px;
 }
+
+
+.report-title {
+  font-weight: bold;
+}
+
+.report-date {
+  font-size: 0.8em;
+  color: #888;
+  margin-left: 10px;
+}
+
+.load-button {
+  padding: 5px 10px;
+  background-color: #28a745;
+}
+
+.load-button:hover {
+  background-color: #218838;
+}
+
+
+table th,
+table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}
+
+table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #444;
+}
+
+table td:first-child {
+  width: 120px;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Kolom aksi pada tabel timeline */
+.timeline-actions {
+  width: 150px;
+  white-space: nowrap;
+}
+
+/* Styling untuk tombol edit */
+.edit-button {
+  background-color: #ffc107;
+  color: #333;
+  padding: 6px 12px;
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+/* Styling untuk tombol hapus */
+.delete-button {
+  background-color: #dc3545;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+/* Styling untuk input file JSON */
+.file-load-section {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.file-label:hover {
+  background-color: #0056b3;
+}
+
+#json-file {
+  display: none; /* Sembunyikan input file bawaan */
+}
+
+/* --- */
+
+/* Styling untuk input waktu yang dipecah */
+.timeline-input-group .time-fields {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timeline-input-group .time-fields input[type="number"] {
+  width: 60px; /* Lebar field jam/menit */
+  text-align: center;
+}
+
+.timeline-input-group .time-separator {
+  font-weight: bold;
+}

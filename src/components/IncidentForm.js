@@ -13,53 +13,52 @@ const IncidentForm = () => {
   });
   const [formErrors, setFormErrors] = useState({});
 
-  // State untuk data timeline dan error
+  // State untuk data timeline, item yang diedit, dan error
   const [timelineData, setTimelineData] = useState([]);
   const [newTimelineItem, setNewTimelineItem] = useState({
-    timestamp: '',
+    jam: '',
+    menit: '',
     description: '',
   });
   const [timelineErrors, setTimelineErrors] = useState({});
+  const [editingIndex, setEditingIndex] = useState(null);
 
   // Handler untuk input form utama
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Hapus error saat user mulai mengetik
     setFormErrors({ ...formErrors, [name]: '' });
   };
 
-  // Handler untuk input timeline baru
+  // Handler untuk input jam dan menit
   const handleTimelineChange = (e) => {
     const { name, value } = e.target;
     setNewTimelineItem({ ...newTimelineItem, [name]: value });
-    // Hapus error saat user mulai mengetik
     setTimelineErrors({ ...timelineErrors, [name]: '' });
   };
 
-  // Logika validasi untuk form utama
+  // Logika validasi
   const validateForm = () => {
     const errors = {};
-    if (!formData.event.trim()) {
-      errors.event = 'Event tidak boleh kosong';
-    }
-    if (!formData.impact.trim()) {
-      errors.impact = 'Dampak tidak boleh kosong';
-    }
-    if (!formData.pic.trim()) {
-      errors.pic = 'PIC tidak boleh kosong';
-    }
+    if (!formData.event.trim()) errors.event = 'Event tidak boleh kosong';
+    if (!formData.impact.trim()) errors.impact = 'Dampak tidak boleh kosong';
+    if (!formData.pic.trim()) errors.pic = 'PIC tidak boleh kosong';
     return errors;
   };
 
-  // Logika validasi untuk item timeline baru
   const validateTimelineItem = () => {
     const errors = {};
-    if (!newTimelineItem.timestamp.trim()) {
-      errors.timestamp = 'Waktu tidak boleh kosong';
-    }
-    if (!/^\d{2}:\d{2}$/.test(newTimelineItem.timestamp.trim())) {
-      errors.timestamp = 'Format waktu harus HH:MM (cth: 16:41)';
+    if (!newTimelineItem.jam.trim() || !newTimelineItem.menit.trim()) {
+      errors.timestamp = 'Jam dan Menit tidak boleh kosong';
+    } else {
+      const jam = parseInt(newTimelineItem.jam, 10);
+      const menit = parseInt(newTimelineItem.menit, 10);
+      if (isNaN(jam) || jam < 0 || jam > 23) {
+        errors.timestamp = 'Jam harus angka antara 00-23';
+      }
+      if (isNaN(menit) || menit < 0 || menit > 59) {
+        errors.timestamp = 'Menit harus angka antara 00-59';
+      }
     }
     if (!newTimelineItem.description.trim()) {
       errors.description = 'Deskripsi tidak boleh kosong';
@@ -67,15 +66,71 @@ const IncidentForm = () => {
     return errors;
   };
 
-  // Handler saat tombol 'Tambah Timeline' diklik
-  const handleAddTimeline = () => {
+  // Handler saat tombol 'Tambah/Simpan' timeline diklik
+  const handleAddOrUpdateTimeline = () => {
     const errors = validateTimelineItem();
     if (Object.keys(errors).length === 0) {
-      setTimelineData([...timelineData, newTimelineItem]);
-      setNewTimelineItem({ timestamp: '', description: '' }); // Reset input
-      setTimelineErrors({}); // Reset error
+      const timestamp = `${newTimelineItem.jam.padStart(2, '0')}:${newTimelineItem.menit.padStart(2, '0')}`;
+      const itemToSave = { timestamp, description: newTimelineItem.description };
+
+      if (editingIndex !== null) {
+        // Logika untuk mengedit item
+        const updatedTimeline = [...timelineData];
+        updatedTimeline[editingIndex] = itemToSave;
+        setTimelineData(updatedTimeline);
+        setEditingIndex(null);
+      } else {
+        // Logika untuk menambah item baru
+        setTimelineData([...timelineData, itemToSave]);
+      }
+      setNewTimelineItem({ jam: '', menit: '', description: '' });
+      setTimelineErrors({});
     } else {
       setTimelineErrors(errors);
+    }
+  };
+
+  // Handler untuk memulai mode edit
+  const handleEditTimeline = (index) => {
+    const item = timelineData[index];
+    const [jam, menit] = item.timestamp.split(':');
+    setNewTimelineItem({ jam, menit, description: item.description });
+    setEditingIndex(index);
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Gulir ke atas
+  };
+
+  // Handler untuk menghapus item timeline
+  const handleDeleteTimeline = (index) => {
+    const updatedTimeline = timelineData.filter((_, i) => i !== index);
+    setTimelineData(updatedTimeline);
+  };
+
+  // Handler untuk memuat laporan dari file JSON
+  const handleFileLoad = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const loadedData = JSON.parse(event.target.result);
+          if (loadedData.event && loadedData.timeline) {
+            setFormData({
+              event: loadedData.event || '',
+              impact: loadedData.impact || '',
+              suspect: loadedData.suspect || '',
+              action: loadedData.action || '',
+              pic: loadedData.pic || '',
+            });
+            setTimelineData(loadedData.timeline || []);
+            alert('Laporan berhasil dimuat dari file!');
+          } else {
+            alert('Format file JSON tidak valid. Pastikan file memiliki struktur yang benar.');
+          }
+        } catch (error) {
+          alert('Gagal memuat file. Pastikan file berformat JSON yang valid.');
+        }
+      };
+      reader.readAsText(file);
     }
   };
 
@@ -84,7 +139,6 @@ const IncidentForm = () => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
-      // Jika tidak ada error, data bisa dikirim ke backend
       const finalReport = {
         ...formData,
         timeline: timelineData,
@@ -92,123 +146,110 @@ const IncidentForm = () => {
       console.log('Final Report:', finalReport);
       alert('Laporan berhasil dibuat! Cek console untuk melihat datanya.');
     } else {
-      // Jika ada error, tampilkan pesan error
       setFormErrors(errors);
       alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
     }
   };
 
-    return (
+  return (
     <div className="form-container">
-        <h1>Major Incident Report (MIR) Generator 📝</h1>
-        <form onSubmit={handleSubmit}>
-        {/* Form untuk Event */}
-        <div className="form-group">
-            <label htmlFor="event">Event: *</label>
-            <input
-            type="text"
-            id="event"
-            name="event"
-            value={formData.event}
-            onChange={handleInputChange}
-            />
-            {formErrors.event && <p className="error-message">⚠️ {formErrors.event}</p>}
-        </div>
+      <h1>Major Incident Report (MIR) Generator 📝</h1>
 
-        {/* Form untuk Dampak */}
-        <div className="form-group">
-            <label htmlFor="impact">Dampak: *</label>
-            <textarea
-            id="impact"
-            name="impact"
-            value={formData.impact}
-            onChange={handleInputChange}
-            ></textarea>
-            {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
-        </div>
+      {/* Input untuk memuat file JSON */}
+      <div className="file-load-section">
+        <h2>Muat Laporan</h2>
+        <label htmlFor="json-file" className="file-label">Pilih File JSON</label>
+        <input
+          type="file"
+          id="json-file"
+          accept=".json"
+          onChange={handleFileLoad}
+        />
+      </div>
 
-        {/* Form untuk Suspect */}
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
-            <label htmlFor="suspect">Suspect:</label>
-            <input
-            type="text"
-            id="suspect"
-            name="suspect"
-            value={formData.suspect}
-            onChange={handleInputChange}
-            />
+          <label htmlFor="event">Event: *</label>
+          <input type="text" id="event" name="event" value={formData.event} onChange={handleInputChange} />
+          {formErrors.event && <p className="error-message">⚠️ {formErrors.event}</p>}
         </div>
-
-        {/* Form untuk Action */}
         <div className="form-group">
-            <label htmlFor="action">Action:</label>
-            <textarea
-            id="action"
-            name="action"
-            value={formData.action}
-            onChange={handleInputChange}
-            ></textarea>
+          <label htmlFor="impact">Dampak: *</label>
+          <textarea id="impact" name="impact" value={formData.impact} onChange={handleInputChange}></textarea>
+          {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
         </div>
-
-        {/* Form untuk PIC */}
         <div className="form-group">
-            <label htmlFor="pic">PIC: *</label>
-            <input
-            type="text"
-            id="pic"
-            name="pic"
-            value={formData.pic}
-            onChange={handleInputChange}
-            />
-            {formErrors.pic && <p className="error-message">⚠️ {formErrors.pic}</p>}
+          <label htmlFor="suspect">Suspect:</label>
+          <input type="text" id="suspect" name="suspect" value={formData.suspect} onChange={handleInputChange} />
+        </div>
+        <div className="form-group">
+          <label htmlFor="action">Action:</label>
+          <textarea id="action" name="action" value={formData.action} onChange={handleInputChange}></textarea>
+        </div>
+        <div className="form-group">
+          <label htmlFor="pic">PIC: *</label>
+          <input type="text" id="pic" name="pic" value={formData.pic} onChange={handleInputChange} />
+          {formErrors.pic && <p className="error-message">⚠️ {formErrors.pic}</p>}
         </div>
 
         {/* --- Bagian Timeline --- */}
         <div className="timeline-input-section">
-            <h2>Tambah Kronologis</h2>
-            <div className="timeline-input-group">
+          <h2>Tambah Kronologis</h2>
+          <div className="timeline-input-group">
             <div className="form-group time-input">
-                <label htmlFor="timestamp">Waktu: *</label>
+              <label htmlFor="jam">Waktu: *</label>
+              <div className="time-fields">
                 <input
-                type="text"
-                id="timestamp"
-                name="timestamp"
-                placeholder="cth: 16:41"
-                value={newTimelineItem.timestamp}
-                onChange={handleTimelineChange}
+                  type="number"
+                  id="jam"
+                  name="jam"
+                  placeholder="Jam"
+                  value={newTimelineItem.jam}
+                  onChange={handleTimelineChange}
+                  min="0"
+                  max="23"
                 />
-                {timelineErrors.timestamp && <p className="error-message">⏰ {timelineErrors.timestamp}</p>}
+                <span className="time-separator">:</span>
+                <input
+                  type="number"
+                  id="menit"
+                  name="menit"
+                  placeholder="Menit"
+                  value={newTimelineItem.menit}
+                  onChange={handleTimelineChange}
+                  min="0"
+                  max="59"
+                />
+              </div>
+              {timelineErrors.timestamp && <p className="error-message">⏰ {timelineErrors.timestamp}</p>}
             </div>
             <div className="form-group description-input">
-                <label htmlFor="description">Deskripsi: *</label>
-                <textarea
+              <label htmlFor="description">Deskripsi: *</label>
+              <textarea
                 id="description"
                 name="description"
                 placeholder="Deskripsi kegiatan atau temuan..."
                 value={newTimelineItem.description}
                 onChange={handleTimelineChange}
-                ></textarea>
-                {timelineErrors.description && <p className="error-message">✍️ {timelineErrors.description}</p>}
+              ></textarea>
+              {timelineErrors.description && <p className="error-message">✍️ {timelineErrors.description}</p>}
             </div>
-            <button type="button" onClick={handleAddTimeline}>
-                Tambah
+            <button type="button" onClick={handleAddOrUpdateTimeline}>
+              {editingIndex !== null ? 'Simpan Perubahan' : 'Tambah'}
             </button>
-            </div>
+          </div>
         </div>
 
-        {/* Tampilkan timeline yang sudah ditambahkan */}
-        {timelineData.length > 0 && <Timeline timelineData={timelineData} />}
-        
-        {/* Tambahkan keterangan ini di sini */}
-        <p className="required-note">* Bidang dengan tanda bintang wajib diisi</p>
+        {timelineData.length > 0 && <Timeline timelineData={timelineData} onEdit={handleEditTimeline} onDelete={handleDeleteTimeline} />}
 
-        {/* Tombol Submit Utama */}
+        <p className="required-note">* Bidang dengan tanda bintang wajib diisi</p>
+        
         <button type="submit" className="submit-button">
-            Buat Laporan MIR
+          Simpan Laporan
         </button>
-        </form>
+      </form>
     </div>
-    );
+  );
 };
 
 export default IncidentForm;
