@@ -11,7 +11,7 @@
     },
     {
       "timestamp": "17:48",
-      "description": "Dilakukan pengecekan konektivitas ke `https://snap.gopayapi.com`.\n- Ping dari intranet resolve ke IP publik **149.129.193.126**.\n- Ping dari router internet ke IP tersebut berjalan normal."
+      "description": "Dilakukan pengecekan konektivitas ke `https://snap.gopayapi.com`. Ping dari intranet resolve ke IP publik **149.129.193.126**. Ping dari router internet ke IP tersebut berjalan normal."
     },
     {
       "timestamp": "18:12",

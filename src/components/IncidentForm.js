@@ -231,7 +231,7 @@ const IncidentForm = () => {
             name="impact"
             value={formData.impact}
             onChange={handleInputChange}
-            placeholder="Contoh:\n- Pengguna tidak bisa login (terutama setelah jam 17:00)\n- Peningkatan laporan kegagalan login di tim Customer Service"
+            placeholder="Contoh: Pengguna tidak bisa login (terutama setelah jam 17:00)"
           ></textarea>
           {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
         </div>
@@ -253,7 +253,7 @@ const IncidentForm = () => {
             name="action"
             value={formData.action}
             onChange={handleInputChange}
-            placeholder="Contoh:\n- Pengecekan status servis otentikasi di server\n- Restart layanan secara bertahap"
+            placeholder="Contoh: Pengecekan status servis otentikasi di server Restart layanan secara bertahap"
           ></textarea>
         </div>
         <div className="form-group">
