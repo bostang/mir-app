@@ -1,0 +1,17 @@
+/* src/components/LandingPage.css */
+
+.card-link {
+    text-decoration: none; /* Hapus garis bawah link */
+    color: inherit;
+    /* Tambahkan efek hover jika diinginkan */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-link:hover .card {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    color: #007bff; /* Mengubah warna judul kartu */
+}

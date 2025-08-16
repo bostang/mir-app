@@ -3,7 +3,6 @@ import Timeline from './Timeline';
 import './Form.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import bniLogo from '../assets/bni-logo-white.png';
 
 const IncidentForm = () => {
   // Fungsi helper untuk mendapatkan nilai dari localStorage
@@ -308,15 +307,7 @@ _Laporan ini dibuat secara otomatis._
 
 
   return (
-    <div>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-          <div className="container d-flex justify-content-center">
-              <a className="navbar-brand" href="/">
-                <img src={bniLogo} alt="Logo"  height="20" className="d-inline-block align-text-top me-2" />
-                Major Incident Report (MIR) Generator 📝
-              </a>
-          </div>
-      </nav>
+    <div className="container"> {/* container terluar  */}
       <div className="form-container">
         {/* Container untuk Judul dan tombol Muat Laporan */}
         <div className="floating-load-button">
@@ -460,9 +451,6 @@ _Laporan ini dibuat secara otomatis._
           </div>
         </form>
       </div>
-      <footer className="bg-dark text-light text-center p-1">
-          <p>&copy; 2025 All Rights Reserved. Created by Bostang Palaguna</p>
-      </footer>
     </div>
   );
 };
