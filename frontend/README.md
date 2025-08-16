@@ -1,4 +1,4 @@
-# Major Incident Report (MIR) Generator 📝
+# MIR-App Frontend
 
 Aplikasi web sederhana untuk membuat laporan Major Incident Report (MIR) dengan mudah, lengkap dengan fitur kronologis dan kemampuan simpan/muat data dalam format JSON.
 
