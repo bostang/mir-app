@@ -74,13 +74,11 @@ const IncidentForm = () => {
       const itemToSave = { timestamp, description: newTimelineItem.description };
 
       if (editingIndex !== null) {
-        // Logika untuk mengedit item
         const updatedTimeline = [...timelineData];
         updatedTimeline[editingIndex] = itemToSave;
         setTimelineData(updatedTimeline);
         setEditingIndex(null);
       } else {
-        // Logika untuk menambah item baru
         setTimelineData([...timelineData, itemToSave]);
       }
       setNewTimelineItem({ jam: '', menit: '', description: '' });
@@ -96,7 +94,7 @@ const IncidentForm = () => {
     const [jam, menit] = item.timestamp.split(':');
     setNewTimelineItem({ jam, menit, description: item.description });
     setEditingIndex(index);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Gulir ke atas
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Handler untuk menghapus item timeline
@@ -134,17 +132,47 @@ const IncidentForm = () => {
     }
   };
 
-  // Handler saat form disubmit
+  // Handler saat form disubmit (sekarang untuk menyimpan/mengunduh file)
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length === 0) {
+      // 1. Siapkan data laporan
       const finalReport = {
-        ...formData,
+        event: formData.event,
+        dampak: formData.impact,
+        suspect: formData.suspect,
+        action: formData.action,
+        pic: formData.pic,
         timeline: timelineData,
       };
-      console.log('Final Report:', finalReport);
-      alert('Laporan berhasil dibuat! Cek console untuk melihat datanya.');
+
+      // 2. Ubah objek laporan menjadi string JSON yang rapi
+      const jsonString = JSON.stringify(finalReport, null, 2);
+
+      // 3. Buat objek Blob dari string JSON
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // 4. Buat URL untuk objek Blob
+      const url = URL.createObjectURL(blob);
+
+      // 5. Buat elemen <a> sementara untuk memicu unduhan
+      const a = document.createElement('a');
+      a.href = url;
+      
+      // 6. Tentukan nama file. Gunakan nama event untuk penamaan yang lebih dinamis.
+      const filename = `${formData.event.trim() || 'Laporan MIR'}.json`.replace(/[^\w\s\.]/gi, '_');
+      a.download = filename;
+
+      // 7. Tambahkan elemen <a> ke body, klik, lalu hapus
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // 8. Hapus URL objek untuk membersihkan memori
+      URL.revokeObjectURL(url);
+      
+      alert('Laporan berhasil disimpan dan diunduh!');
     } else {
       setFormErrors(errors);
       alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
@@ -155,7 +183,6 @@ const IncidentForm = () => {
     <div className="form-container">
       <h1>Major Incident Report (MIR) Generator 📝</h1>
 
-      {/* Input untuk memuat file JSON */}
       <div className="file-load-section">
         <h2>Muat Laporan</h2>
         <label htmlFor="json-file" className="file-label">Pilih File JSON</label>
@@ -170,29 +197,62 @@ const IncidentForm = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="event">Event: *</label>
-          <input type="text" id="event" name="event" value={formData.event} onChange={handleInputChange} />
+          <input
+            type="text"
+            id="event"
+            name="event"
+            value={formData.event}
+            onChange={handleInputChange}
+            placeholder="Contoh: Kendala otentikasi pengguna pada layanan Mobile App"
+          />
           {formErrors.event && <p className="error-message">⚠️ {formErrors.event}</p>}
         </div>
         <div className="form-group">
           <label htmlFor="impact">Dampak: *</label>
-          <textarea id="impact" name="impact" value={formData.impact} onChange={handleInputChange}></textarea>
+          <textarea
+            id="impact"
+            name="impact"
+            value={formData.impact}
+            onChange={handleInputChange}
+            placeholder="Contoh:Pengguna tidak bisa login (terutama setelah jam 17:00); Peningkatan laporan kegagalan login di tim Customer Service"
+          ></textarea>
           {formErrors.impact && <p className="error-message">⚠️ {formErrors.impact}</p>}
         </div>
         <div className="form-group">
           <label htmlFor="suspect">Suspect:</label>
-          <input type="text" id="suspect" name="suspect" value={formData.suspect} onChange={handleInputChange} />
+          <input
+            type="text"
+            id="suspect"
+            name="suspect"
+            value={formData.suspect}
+            onChange={handleInputChange}
+            placeholder="Contoh: Diduga ada masalah pada servis otentikasi"
+          />
         </div>
         <div className="form-group">
           <label htmlFor="action">Action:</label>
-          <textarea id="action" name="action" value={formData.action} onChange={handleInputChange}></textarea>
+          <textarea
+            id="action"
+            name="action"
+            value={formData.action}
+            onChange={handleInputChange}
+            placeholder="Contoh: Pengecekan status servis otentikasi di server; Restart layanan secara bertahap"
+          ></textarea>
+          {formErrors.action && <p className="error-message">⚠️ {formErrors.action}</p>}
         </div>
         <div className="form-group">
           <label htmlFor="pic">PIC: *</label>
-          <input type="text" id="pic" name="pic" value={formData.pic} onChange={handleInputChange} />
+          <input
+            type="text"
+            id="pic"
+            name="pic"
+            value={formData.pic}
+            onChange={handleInputChange}
+            placeholder="Contoh: Tim Backend, Tim SRE, Tim Keamanan"
+          />
           {formErrors.pic && <p className="error-message">⚠️ {formErrors.pic}</p>}
         </div>
 
-        {/* --- Bagian Timeline --- */}
         <div className="timeline-input-section">
           <h2>Tambah Kronologis</h2>
           <div className="timeline-input-group">
@@ -203,7 +263,7 @@ const IncidentForm = () => {
                   type="number"
                   id="jam"
                   name="jam"
-                  placeholder="Jam"
+                  placeholder="HH"
                   value={newTimelineItem.jam}
                   onChange={handleTimelineChange}
                   min="0"
@@ -214,7 +274,7 @@ const IncidentForm = () => {
                   type="number"
                   id="menit"
                   name="menit"
-                  placeholder="Menit"
+                  placeholder="MM"
                   value={newTimelineItem.menit}
                   onChange={handleTimelineChange}
                   min="0"
@@ -228,7 +288,7 @@ const IncidentForm = () => {
               <textarea
                 id="description"
                 name="description"
-                placeholder="Deskripsi kegiatan atau temuan..."
+                placeholder="Contoh: Terdapat lonjakan error HTTP 500 pada API /auth/login"
                 value={newTimelineItem.description}
                 onChange={handleTimelineChange}
               ></textarea>

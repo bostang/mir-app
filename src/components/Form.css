@@ -199,6 +199,8 @@ table tr:nth-child(even) {
 
 /* --- */
 
+/* ... (kode di atas tidak berubah) ... */
+
 /* Styling untuk input waktu yang dipecah */
 .timeline-input-group .time-fields {
   display: flex;
@@ -213,4 +215,47 @@ table tr:nth-child(even) {
 
 .timeline-input-group .time-separator {
   font-weight: bold;
+}
+
+/* Styling untuk input waktu yang dipecah */
+.timeline-input-group .time-fields {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timeline-input-group .time-fields input[type="number"] {
+  width: 40px;
+  text-align: center;
+}
+
+.timeline-input-group .time-separator {
+  font-weight: bold;
+}
+
+/* --- PERUBAHAN DI SINI --- */
+
+.timeline-input-group {
+  display: flex;
+  gap: 15px;
+  align-items: center; /* Mengubah dari flex-start menjadi center */
+  flex-wrap: wrap;
+}
+
+.timeline-input-group .time-input {
+  /* Biarkan flexbox mengatur lebar, namun berikan ukuran minimal */
+  flex: 0 0 auto;
+  min-width: 130px;
+}
+
+.timeline-input-group .description-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+.timeline-input-group button {
+  flex-shrink: 0;
+  white-space: nowrap;
+  /* Tambahan margin untuk sedikit ruang */
+  margin-top: 15px;
 }
