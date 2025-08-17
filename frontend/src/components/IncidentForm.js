@@ -315,7 +315,9 @@ _Laporan ini dibuat secara otomatis._
 
 
   return (
-    <div className="container"> {/* container terluar  */}
+    <div className="container my-5"> {/* container terluar  */}
+      <h1 className="text-center mb-4">MIR Generator</h1>
+      <p className="text-center">Tools untuk membuat MIR</p>
       <div className="form-container">
         {/* Container untuk Judul dan tombol Muat Laporan */}
         <div className="floating-load-button">
