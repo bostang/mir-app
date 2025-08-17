@@ -2,6 +2,30 @@
 
 Aplikasi web untuk membuat laporan insiden besar (Major Incident Report) dalam format yang terstruktur. Aplikasi ini memungkinkan pengguna untuk memasukkan detail insiden, kronologi, dan menghasilkan laporan dalam format JSON atau PowerPoint (PPTX).
 
+## Catatan
+
+Untuk memastikan bahwa menu Call Tree dapat diakses, pastikan bahwa daftar aplikasi tersimpan di `frontend/public/application.json` dengan setiap aplikasi dinyatakan dalam format `.json` dengan template sebagai berikut:
+
+```json
+{
+    "No": "12",
+    "Application ID": "AMXXX",
+    "Nama Aplikasi": "AwXXX",
+    "Description/Definition": "Aplikasi yang dipergunakan untuk mendistribusikan beberapa Exception Report (ER) kepada pimpinan unit bisnis sehingga dapat dipergunakan oleh first line sebagai salah satu sarana supervise atas risiko operasional",
+    "Business Owner": "IAD",
+    "System Owner": "ADV - XXX Departement",
+    "Criticality": "4-Non Critical",
+    "Touchpoint": "",
+    "FO/MO/BO": "MO",
+    "Pengembang": "Inhouse",
+    "Status": "",
+    "Customer Facing": "No",
+    "Status ARIS": "Done",
+    "Remarks": "",
+    "Param Rep/Cust": "0"
+}
+```
+
 ## Struktur Proyek
 
 Proyek ini terdiri dari dua bagian utama:

@@ -5,6 +5,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const IncidentForm = () => {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
   // Fungsi helper untuk mendapatkan nilai dari localStorage
   const getSavedValue = (key, initialValue) => {
     try {
@@ -201,49 +203,55 @@ const IncidentForm = () => {
   };
 
   // Handler untuk menyimpan sebagai PPT
+// Handler untuk menyimpan sebagai PPT
   const handleSavePpt = async () => {
-    const errors = validateForm();
-    if (Object.keys(errors).length === 0) {
-      const finalReport = {
-        event: formData.event,
-        impact: formData.impact,
-        suspect: formData.suspect,
-        action: formData.action,
-        pic: formData.pic,
-        timeline: timelineData,
-      };
+      const errors = validateForm();
+      if (Object.keys(errors).length === 0) {
+          const finalReport = {
+              event: formData.event,
+              impact: formData.impact,
+              suspect: formData.suspect,
+              action: formData.action,
+              pic: formData.pic,
+              timeline: timelineData,
+          };
+          try {
+              const response = await fetch(`${backendUrl}/api/generate-ppt`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(finalReport),
+              });
 
-      try {
-        const response = await fetch('http://localhost:3001/api/generate-ppt', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(finalReport),
-        });
+              if (response.ok) {
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  const filename = `${formData.event.trim() || 'Laporan MIR'}.pptx`.replace(/[^\w\s.]/gi, '_');
+                  a.download = filename;
+                  document.body.appendChild(a);
 
-        if (response.ok) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          const filename = `${formData.event.trim() || 'Laporan MIR'}.pptx`.replace(/[^\w\s.]/gi, '_');
-          a.download = filename;
-          document.body.appendChild(a);
-          a.remove();
-          window.URL.revokeObjectURL(url);
-          alert('Laporan berhasil dibuat dan diunduh sebagai PPT!');
-        } else {
-          alert('Gagal membuat laporan PPT. Mohon coba lagi.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan saat menghubungkan ke server.');
+                  // Tambahkan jeda (delay) singkat sebelum menghapus elemen
+                  setTimeout(() => {
+                      a.click();
+                      a.remove();
+                      window.URL.revokeObjectURL(url);
+                      alert('Laporan berhasil dibuat dan diunduh sebagai PPT!');
+                  }, 100);
+
+              } else {
+                  alert('Gagal membuat laporan PPT. Mohon coba lagi.');
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              alert('Terjadi kesalahan saat menghubungkan ke server.');
+          }
+      } else {
+          setFormErrors(errors);
+          alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
       }
-    } else {
-      setFormErrors(errors);
-      alert('Terdapat data yang belum diisi dengan benar. Mohon periksa kembali.');
-    }
   };
   
   // Handler untuk menyalin ke clipboard
