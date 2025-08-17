@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './FloatingButtons.css';
-import './ApplicationDetails.css'; // Pastikan file CSS ini ada dan diimpor
+import './ApplicationDetails.css';
 
 const ApplicationDetails = () => {
     const { appId } = useParams();
     const [appData, setAppData] = useState(null);
-    const [picData, setPicData] = useState([]);
     const [showPicTable, setShowPicTable] = useState(false);
 
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -36,25 +34,8 @@ const ApplicationDetails = () => {
         }
     };
 
-    const handleTogglePic = async () => {
-        if (!showPicTable) {
-            try {
-                const response = await fetch(`${backendUrl}/api/applications/${appId}/pics`);
-                if (!response.ok) {
-                    setPicData([]); // Jika tidak ada data PIC
-                } else {
-                    const data = await response.json();
-                    setPicData(data);
-                }
-                setShowPicTable(true);
-            } catch (error) {
-                console.error("Gagal memuat data PIC:", error);
-                setPicData([]);
-                setShowPicTable(true);
-            }
-        } else {
-            setShowPicTable(false);
-        }
+    const handleTogglePic = () => {
+        setShowPicTable(prev => !prev);
     };
 
     if (!appData) {
@@ -83,7 +64,7 @@ const ApplicationDetails = () => {
             {showPicTable && (
                 <div className="pic-table-container mt-4">
                     <h2 className="mb-3">Daftar PIC</h2>
-                    {picData.length > 0 ? (
+                    {appData.pics && appData.pics.length > 0 ? (
                         <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead className="thead-dark">
@@ -97,7 +78,7 @@ const ApplicationDetails = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {picData.map((pic, index) => (
+                                    {appData.pics.map((pic, index) => (
                                         <tr key={index}>
                                             <td>{pic.Nama}</td>
                                             <td>{pic.Jabatan}</td>
@@ -117,28 +98,30 @@ const ApplicationDetails = () => {
             )}
 
             <div className="floating-btn-container">
-                <button 
-                    className="btn btn-primary floating-btn" 
-                    title="Daftar PIC" 
-                    onClick={handleTogglePic}
-                >
-                    <i className="bi bi-person-fill"></i>
-                </button>
+                {appData.pics && appData.pics.length > 0 && (
+                    <button 
+                        className="btn btn-primary floating-btn" 
+                        title="Daftar PIC" 
+                        onClick={handleTogglePic}
+                    >
+                        <i className="bi bi-person-fill"></i>
+                    </button>
+                )}
 
                 {appData.warroomLink && (
                     <button 
                         onClick={handleCopyWarroomLink} 
-                        className="btn btn-info floating-btn" 
+                        className="btn btn-teams floating-btn" // Ubah kelas di sini
                         title="Salin Link Warroom"
                     >
-                        <i className="bi bi-people"></i>
+                        <i className="bi bi-microsoft-teams"></i>
                     </button>
                 )}
 
                 {appData.aodDocLink && (
                     <a 
                         href={appData.aodDocLink} 
-                        className="btn btn-warning floating-btn" 
+                        className="btn btn-adobe floating-btn" // Ubah kelas di sini
                         target="_blank" 
                         rel="noopener noreferrer" 
                         title="Dokumen AOD"

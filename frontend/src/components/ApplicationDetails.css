@@ -17,3 +17,25 @@
     align-items: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+.btn-teams {
+    background-color: #6264A7; /* Warna ungu MS Teams yang baru */
+    border-color: #6264A7;
+    color: white;
+}
+
+.btn-teams:hover {
+    background-color: #4B4D80; /* Warna yang lebih gelap untuk efek hover */
+    border-color: #4B4D80;
+}
+
+.btn-adobe {
+    background-color: #D62728;
+    border-color: #D62728;
+    color: white;
+}
+
+.btn-adobe:hover {
+    background-color: #B42122;
+    border-color: #B42122;
+}
