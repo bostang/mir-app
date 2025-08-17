@@ -4,27 +4,64 @@ Aplikasi web untuk membuat laporan insiden besar (Major Incident Report) dalam f
 
 ## Catatan
 
-Untuk memastikan bahwa menu Call Tree dapat diakses, pastikan bahwa daftar aplikasi tersimpan di `frontend/public/application.json` dengan setiap aplikasi dinyatakan dalam format `.json` dengan template sebagai berikut:
+- Untuk memastikan bahwa menu Call Tree dapat diakses, pastikan bahwa daftar aplikasi tersimpan di `backend/data/applications.json`.
 
-```json
-{
-    "No": "12",
-    "Application ID": "AMXXX",
-    "Nama Aplikasi": "AwXXX",
-    "Description/Definition": "Aplikasi yang dipergunakan untuk mendistribusikan beberapa Exception Report (ER) kepada pimpinan unit bisnis sehingga dapat dipergunakan oleh first line sebagai salah satu sarana supervise atas risiko operasional",
-    "Business Owner": "IAD",
-    "System Owner": "ADV - XXX Departement",
-    "Criticality": "4-Non Critical",
-    "Touchpoint": "",
-    "FO/MO/BO": "MO",
-    "Pengembang": "Inhouse",
-    "Status": "",
-    "Customer Facing": "No",
-    "Status ARIS": "Done",
-    "Remarks": "",
-    "Param Rep/Cust": "0"
-}
-```
+    Berikut adalah template data aplikasi:
+
+    ```json
+    {
+        "No": "12",
+        "Application ID": "AMXXX",
+        "Nama Aplikasi": "AwXXX",
+        "Description/Definition": "Aplikasi yang dipergunakan untuk mendistribusikan beberapa Exception Report (ER) kepada pimpinan unit bisnis sehingga dapat dipergunakan oleh first line sebagai salah satu sarana supervise atas risiko operasional",
+        "Business Owner": "IAD",
+        "System Owner": "ADV - XXX Departement",
+        "Criticality": "4-Non Critical",
+        "Touchpoint": "",
+        "FO/MO/BO": "MO",
+        "Pengembang": "Inhouse",
+        "Status": "",
+        "Customer Facing": "No",
+        "Status ARIS": "Done",
+        "Remarks": "",
+        "Param Rep/Cust": "0"
+    }
+    ```
+
+- Untuk detail tambahan (seperti link War-room dan dokumen AOD) dan data PIC, pastikan file `backend/data/links.json` dan `backend/data/pics.json` tersedia.
+
+    Berikut adalah template data untuk `links.json`:
+
+    ```json
+    [
+      {
+        "Application ID": "AMORAC0002",
+        "aodDocLink": "[https://docs.google.com/document/d/.../edit](https://docs.google.com/document/d/.../edit)",
+        "warroomLink": "[https://teams.microsoft.com/l/team/](https://teams.microsoft.com/l/team/)..."
+      }
+    ]
+    ```
+
+    Dan template untuk `pics.json`:
+
+    ```json
+    [
+      {
+        "Application ID": "AMORAC0002",
+        "pics": [
+          {
+            "Nama": "Susilo Indriasworo",
+            "Role": "L2",
+            "Jabatan": "Departement Head",
+            "No Telp": "08111750914",
+            "Email": "susilo@bni.co.id",
+            "Entity": "BNI",
+            "Grup": "APS"
+          }
+        ]
+      }
+    ]
+    ```
 
 ## Struktur Proyek
 
@@ -38,7 +75,7 @@ Proyek ini terdiri dari dua bagian utama:
 ### 1. Klon Repositori
 
 ```bash
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+git clone [https://github.com/bostang/mir-app.git](https://github.com/bostang/mir-app.git)
 cd mir-app
 ````
 
